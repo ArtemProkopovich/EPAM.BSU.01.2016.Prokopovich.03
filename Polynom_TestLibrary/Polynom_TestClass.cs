@@ -80,8 +80,9 @@ namespace Polynom_TestLibrary
         }
 
         [Test]
-        [TestCase(new double[] { 0, 1 }, new double[] { 0, 1 }, Result = false)]
+        [TestCase(new double[] { 0, 1 }, new double[] { 0, 1 }, Result = true)]
         [TestCase(new double[] { -1 }, new double[] { 5, 6, -9 }, Result = false)]
+        [TestCase(new double[0] , new double[0], Result = true)]
         public bool Polynom_GetHashCode_Test(double[] arr1, double[] arr2)
         {
             Polynom p = new Polynom(arr1);

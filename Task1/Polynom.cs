@@ -55,7 +55,10 @@ namespace Task1
 
         public override int GetHashCode()
         {
-            return coefficients.GetHashCode();
+            double hash = 0;
+            for (int i = 0; i < Power; i++)
+                hash += (this[i] + 5)*3 + 7;
+            return (int) hash;
         }
 
         public override string ToString()
