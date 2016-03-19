@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Task1
 {
-    public class Polynom
+    public class Polynom : IEquatable<Polynom>
     {
         private readonly double[] coefficients;
-        private static readonly double accuracy;
+        private static readonly double Accuracy;
 
         public int Power => coefficients.Length;
 
@@ -24,9 +24,10 @@ namespace Task1
                     throw new ArgumentOutOfRangeException();
             }
         }
+
         static Polynom()
         {
-            accuracy = 0.0000001;
+            Accuracy = 0.0000001;
         }
 
         public Polynom()
@@ -39,7 +40,7 @@ namespace Task1
             if (coef == null)
                 throw new ArgumentNullException(nameof(coef));
             int i = coef.Length - 1;
-            while (i > 0 && Math.Abs(coef[i]) < accuracy)
+            while (i > 0 && Math.Abs(coef[i]) < Accuracy)
                 i--;
             coefficients = new double[i + 1];
             for (int j = 0; j <= i; j++)
@@ -54,7 +55,7 @@ namespace Task1
                 return false;
             if (ReferenceEquals(obj, this))
                 return true;
-            return this.Equals(obj as Polynom);          
+            return this.Equals(obj as Polynom);
         }
 
         public bool Equals(Polynom p)
@@ -62,7 +63,7 @@ namespace Task1
             if (p?.Power != this.Power)
                 return false;
             for (int i = 0; i < this.Power; i++)
-                if (Math.Abs(p[i] - this[i]) > accuracy)
+                if (Math.Abs(p[i] - this[i]) > Accuracy)
                     return false;
             return true;
         }
@@ -97,7 +98,7 @@ namespace Task1
             if (ReferenceEquals(lhs, null))
                 throw new ArgumentNullException();
             if (ReferenceEquals(rhs, null))
-                throw new ArgumentNullException();   
+                throw new ArgumentNullException();
             int maxPower = Math.Max(lhs.Power, rhs.Power);
             double[] resultCoef = new double[maxPower];
             for (int i = 0; i < lhs.Power; i++)
