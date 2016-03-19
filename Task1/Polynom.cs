@@ -10,22 +10,36 @@ namespace Task1
     public class Polynom
     {
         private readonly double[] coefficients;
+        private static readonly double accuracy;
 
         public int Power => coefficients.Length;
 
-        public double this[int index] => coefficients[index];
+        public double this[int index]
+        {
+            get
+            {
+                if (index > 0 || index < coefficients.Length)
+                    return coefficients[index];
+                else
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        static Polynom()
+        {
+            accuracy = 0.0000001;
+        }
 
         public Polynom()
         {
             coefficients = new double[0];
         }
 
-        public Polynom(double[] coef)
+        public Polynom(params double[] coef)
         {
             if (coef == null)
                 throw new ArgumentNullException(nameof(coef));
             int i = coef.Length - 1;
-            while (i > 0 && coef[i] == 0)
+            while (i > 0 && Math.Abs(coef[i]) < accuracy)
                 i--;
             coefficients = new double[i + 1];
             for (int j = 0; j <= i; j++)
@@ -48,7 +62,7 @@ namespace Task1
             if (p?.Power != this.Power)
                 return false;
             for (int i = 0; i < this.Power; i++)
-                if (p[i] != this[i])
+                if (Math.Abs(p[i] - this[i]) > accuracy)
                     return false;
             return true;
         }
@@ -58,7 +72,7 @@ namespace Task1
             double hash = 0;
             for (int i = 0; i < Power; i++)
                 hash += (this[i] + 5)*3 + 7;
-            return (int) hash;
+            return (int) hash ^ Power;
         }
 
         public override string ToString()
@@ -78,20 +92,24 @@ namespace Task1
             return result.ToString();
         }
 
-        public static Polynom Add(Polynom pol1, Polynom pol2)
-        {        
-            int maxPower = Math.Max(pol1.Power, pol2.Power);
+        public static Polynom Add(Polynom lhs, Polynom rhs)
+        {
+            if (ReferenceEquals(lhs, null))
+                throw new ArgumentNullException();
+            if (ReferenceEquals(rhs, null))
+                throw new ArgumentNullException();   
+            int maxPower = Math.Max(lhs.Power, rhs.Power);
             double[] resultCoef = new double[maxPower];
-            for (int i = 0; i < pol1.Power; i++)
-                resultCoef[i] += pol1[i];
-            for (int i = 0; i < pol2.Power; i++)
-                resultCoef[i] += pol2[i];
+            for (int i = 0; i < lhs.Power; i++)
+                resultCoef[i] += lhs[i];
+            for (int i = 0; i < rhs.Power; i++)
+                resultCoef[i] += rhs[i];
             return new Polynom(resultCoef);
         }
 
-        public static Polynom operator +(Polynom pol1, Polynom pol2)
+        public static Polynom operator +(Polynom lhs, Polynom rhs)
         {
-            return Add(pol1, pol2);
+            return Add(lhs, rhs);
         }
 
         public Polynom Add(Polynom polynom)
@@ -99,19 +117,23 @@ namespace Task1
             return Add(this, polynom);
         }
 
-        public static Polynom operator -(Polynom pol1, Polynom pol2)
+        public static Polynom operator -(Polynom lhs, Polynom rhs)
         {
-            return Substruct(pol1, pol2);
+            return Substruct(lhs, rhs);
         }
 
-        public static Polynom Substruct(Polynom pol1, Polynom pol2)
+        public static Polynom Substruct(Polynom lhs, Polynom rhs)
         {
-            int maxPower = Math.Max(pol1.Power, pol2.Power);
+            if (ReferenceEquals(lhs, null))
+                throw new ArgumentNullException();
+            if (ReferenceEquals(rhs, null))
+                throw new ArgumentNullException();
+            int maxPower = Math.Max(lhs.Power, rhs.Power);
             double[] resultCoef = new double[maxPower];
-            for (int i = 0; i < pol1.Power; i++)
-                resultCoef[i] += pol1[i];
-            for (int i = 0; i < pol2.Power; i++)
-                resultCoef[i] -= pol2[i];
+            for (int i = 0; i < lhs.Power; i++)
+                resultCoef[i] += lhs[i];
+            for (int i = 0; i < rhs.Power; i++)
+                resultCoef[i] -= rhs[i];
             return new Polynom(resultCoef);
         }
 
@@ -120,19 +142,23 @@ namespace Task1
             return Substruct(this, polynom);
         }
 
-        public static Polynom operator *(Polynom pol1, Polynom pol2)
+        public static Polynom operator *(Polynom lhs, Polynom rhs)
         {
-            return Multiply(pol1, pol2);
+            return Multiply(lhs, rhs);
         }
 
-        public static Polynom Multiply(Polynom pol1, Polynom pol2)
+        public static Polynom Multiply(Polynom lhs, Polynom rhs)
         {
-            int maxPower = pol1.Power + pol2.Power - 1;
+            if (ReferenceEquals(lhs, null))
+                throw new ArgumentNullException();
+            if (ReferenceEquals(rhs, null))
+                throw new ArgumentNullException();
+            int maxPower = lhs.Power + rhs.Power - 1;
             double[] resultCoef = new double[maxPower];
-            for (int i = 0; i < pol1.Power; i++)
-                for (int j = 0; j < pol2.Power; j++)
+            for (int i = 0; i < lhs.Power; i++)
+                for (int j = 0; j < rhs.Power; j++)
                 {
-                    resultCoef[i + j] += pol1[i]*pol2[j];
+                    resultCoef[i + j] += lhs[i]*rhs[j];
                 }
             return new Polynom(resultCoef);
         }
